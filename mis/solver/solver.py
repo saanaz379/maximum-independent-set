@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Counter, Callable
 import networkx as nx
 import copy
+import logging
 
 from pulser import Pulse, Register
 from qoolqit._solvers.backends import BaseBackend, get_backend
@@ -16,6 +17,9 @@ from mis.pipeline.config import BackendConfig, SolverConfig
 from mis.solver.greedymapping import GreedyMapping
 from mis.pipeline.layout import Layout
 from mis.shared.graphs import remove_neighborhood, BaseWeightPicker
+
+
+logger = logging.getLogger(__name__)
 
 
 def _extract_backend(config: SolverConfig) -> BaseBackend:
