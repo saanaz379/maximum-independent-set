@@ -19,14 +19,11 @@ from mis.solver.greedymapping import GreedyMapping
 from mis.pipeline.layout import Layout
 from mis.shared.graphs import remove_neighborhood, BaseWeightPicker
 
+
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        return json.dumps({
-            "name": record.name,
-            "level": record.levelname,
-            "message": record.getMessage(),
-            "user id": record.user_id
-        })
+        return json.dumps({"asctime": record.asctime, "message": record.getMessage()})
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -127,7 +124,9 @@ class MISSolverClassical(BaseSolver):
 
         solutions = self.fixtures.postprocess([partial_solution])
         solutions.sort(key=lambda sol: sol.frequency, reverse=True)
-        logger.info(f"Number of MIS solutions found with classical solver: {len(solutions)}. Returning up to {self.config.max_number_of_solutions} solutions.")
+        logger.info(
+            f"Number of MIS solutions found with classical solver: {len(solutions)}. Returning up to {self.config.max_number_of_solutions} solutions."
+        )
 
         return solutions[: self.config.max_number_of_solutions]
 
@@ -245,13 +244,13 @@ class MISSolverQuantum(BaseSolver):
         if len(preprocessed_instance.graph) == 0:
             # Edge case: we cannot process an empty register.
             # Luckily, the solution is trivial.
-            logger.info("The pre-processor managed to reduce the graph to 0 nodes. Skipping solver");
+            logger.info("The pre-processor managed to reduce the graph to 0 nodes. Skipping solver")
             return self._process(instance=preprocessed_instance, data=Counter())
         if len(preprocessed_instance.graph) == 1:
             # Edge case: we also cannot process a register with a single atom.
             # Luckily, the solution is trivial.
             nodes = list(preprocessed_instance.graph.nodes)
-            logger.info("The pre-processor managed to reduce the graph to 1 node. Skipping solver");
+            logger.info("The pre-processor managed to reduce the graph to 1 node. Skipping solver")
             return [MISSolution(preprocessed_instance, nodes, frequency=1)]
 
         register = self._embedder.embed(
