@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Counter, Callable
 import networkx as nx
 import copy
+import datetime
 import json
 import logging
 
@@ -22,7 +23,12 @@ from mis.shared.graphs import remove_neighborhood, BaseWeightPicker
 
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        return json.dumps({"asctime": record.asctime, "message": record.getMessage()})
+        return json.dumps(
+            {
+                "asctime": datetime.datetime.now().strftime("%d.%b %Y %H:%M:%S"),
+                "message": record.getMessage(),
+            }
+        )
 
 
 logger = logging.getLogger(__name__)
